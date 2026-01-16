@@ -36,7 +36,7 @@ import { Button } from "../ui/button";
 
 interface PostProps {
   post: any;
-  onLike: (postId: string) => void;
+  onLike: (postId: string, isLiked: boolean) => void;
 }
 
 export function Post({ post, onLike }: PostProps) {
@@ -165,7 +165,7 @@ export function Post({ post, onLike }: PostProps) {
             )}
             onClick={e => {
               e.stopPropagation();
-              onLike(post.id);
+              onLike(post.id, post.isLiked);
             }}
           >
             <div className='flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-red-500/10'>

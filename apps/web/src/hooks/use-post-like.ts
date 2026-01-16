@@ -16,7 +16,6 @@ export function usePostLike(queryKey: QueryKey) {
   // In feed.tsx it was one ref for all posts because it was in the parent.
   // If we assume this hook is used in the parent (Feed), it works the same.
   const debounceRefs = useRef<Record<string, NodeJS.Timeout>>({});
-  const clickCountRefs = useRef<Record<string, number>>({});
 
   const { mutate: toggleLike } = useMutation({
     ...trpc.likes.toggleLike.mutationOptions(),
@@ -25,19 +24,27 @@ export function usePostLike(queryKey: QueryKey) {
     },
   });
 
-  const handleLike = (postId: string) => {
+  /*
+    Simple debounce:
+    When user clicks, we immediately optimistic update.
+    We also debounce the actual server request.
+    If multiple clicks happen, the LAST state wins.
+  */
+  const handleLike = (postId: string, currentIsLiked: boolean) => {
+    const newIsLiked = !currentIsLiked;
+    const action = newIsLiked ? "like" : "unlike";
+
     // 1. Instant Optimistic Update
+    // We update the cache to the NEW state immediately
     queryClient.setQueryData(queryKey, (old: any) => {
       if (!old) return old;
-      // Handle both array of posts (Feed) or single post (Post detail) if structure matches?
-      // feed.tsx assumes `old` is an array. Let's keep it safe for array for now.
       if (Array.isArray(old)) {
         return old.map((p: any) =>
           p.id === postId
             ? {
                 ...p,
-                isLiked: !p.isLiked,
-                likeCount: p.isLiked ? p.likeCount - 1 : p.likeCount + 1,
+                isLiked: newIsLiked,
+                likeCount: newIsLiked ? p.likeCount + 1 : p.likeCount - 1,
                 updatedAt: new Date(),
               }
             : p
@@ -51,16 +58,10 @@ export function usePostLike(queryKey: QueryKey) {
       clearTimeout(debounceRefs.current[postId]);
     }
 
-    clickCountRefs.current[postId] = (clickCountRefs.current[postId] || 0) + 1;
-
     debounceRefs.current[postId] = setTimeout(() => {
-      const clicks = clickCountRefs.current[postId];
-      if (clicks % 2 !== 0) {
-        toggleLike({ postId });
-      }
-      delete clickCountRefs.current[postId];
+      toggleLike({ postId, action });
       delete debounceRefs.current[postId];
-    }, 1500);
+    }, 500);
   };
 
   return { handleLike };
