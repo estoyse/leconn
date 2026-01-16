@@ -1,0 +1,3 @@
+{
+  "extends": "@leconn/config/tsconfig.base.json"
+}

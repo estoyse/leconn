@@ -1,0 +1,24 @@
+{
+  "name": "@leconn/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@leconn/db": "workspace:*",
+    "@leconn/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@leconn/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
