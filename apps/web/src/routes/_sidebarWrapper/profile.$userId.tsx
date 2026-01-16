@@ -65,18 +65,16 @@ function RouteComponent() {
           </div>
         </div>
 
-        <div className='absolute bottom-0 left-4 px-4'>
-          <div className='rounded-full bg-background'>
-            <Avatar className='w-32 h-32 border-4 m-2 border-background'>
-              <AvatarImage
-                src={user.image ?? undefined}
-                alt={user.name ?? "User"}
-              />
-              <AvatarFallback className='text-4xl'>
-                {user.name?.[0]}
-              </AvatarFallback>
-            </Avatar>
-          </div>
+        <div className='absolute bottom-0'>
+          <Avatar className='w-32 h-32 border-8 m-2 border-background'>
+            <AvatarImage
+              src={user.image ?? undefined}
+              alt={user.name ?? "User"}
+            />
+            <AvatarFallback className='text-4xl'>
+              {user.name?.[0]}
+            </AvatarFallback>
+          </Avatar>
         </div>
 
         <div className='flex justify-end p-4 pt-4 sm:pt-4'>
