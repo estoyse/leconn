@@ -4,8 +4,10 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "serve": "vite preview",
-    "dev": "vite dev"
+    "dev": "vite dev",
+    "preview": "vite preview",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -39,6 +41,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.21.0",
     "@leconn/config": "workspace:*",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-router-devtools": "^1.141.1",
@@ -50,6 +53,7 @@
     "jsdom": "^26.0.0",
     "typescript": "catalog:",
     "vite": "^7.0.2",
-    "web-vitals": "^5.0.3"
+    "web-vitals": "^5.0.3",
+    "wrangler": "^4.59.2"
   }
 }
