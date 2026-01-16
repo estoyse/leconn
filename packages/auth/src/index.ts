@@ -1,9 +1,7 @@
 import { db } from "@leconn/db";
 import * as schema from "@leconn/db/schema/auth";
-import { env } from "@leconn/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -11,9 +9,36 @@ export const auth = betterAuth({
 
     schema: schema,
   }),
-  trustedOrigins: [env.CORS_ORIGIN],
+  trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [tanstackStartCookies()],
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
+    },
+  },
+  user: {
+    fields: {},
+    additionalFields: {
+      username: {
+        type: "string",
+      },
+      bio: {
+        type: "string",
+      },
+      website: {
+        type: "string",
+      },
+      banner: {
+        type: "string",
+      },
+      createdAt: {
+        type: "string",
+      },
+    },
+  },
 });
+export type Auth = typeof auth;
