@@ -3,13 +3,20 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { Toaster } from "@/components/ui/sonner";
 
-import Header from "../components/header";
 import appCss from "../index.css?url";
+import { themeScript } from "@/features/theme/scripts";
+import { ThemeProvider } from "@/features/theme/theme-provider";
+import { THEME_COOKIE_NAME } from "@/features/theme/constants";
 export interface RouterAppContext {
   trpc: TRPCOptionsProxy<AppRouter>;
   queryClient: QueryClient;
@@ -42,18 +49,19 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument() {
   return (
-    <html lang="en" className="dark">
+    <html lang='en' suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
-        <div className="grid h-svh grid-rows-[auto_1fr]">
-          <Header />
+      <body suppressHydrationWarning>
+        <ThemeProvider defaultTheme='system' storageKey={THEME_COOKIE_NAME}>
           <Outlet />
-        </div>
+        </ThemeProvider>
+
         <Toaster richColors />
-        <TanStackRouterDevtools position="bottom-left" />
-        <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+        <TanStackRouterDevtools position='bottom-left' />
+        <ReactQueryDevtools position='bottom' buttonPosition='bottom-right' />
         <Scripts />
       </body>
     </html>

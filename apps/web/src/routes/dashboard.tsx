@@ -23,13 +23,13 @@ function RouteComponent() {
   const { session } = Route.useRouteContext();
 
   const trpc = useTRPC();
-  const privateData = useQuery(trpc.privateData.queryOptions());
+  const { data, isLoading } = useQuery(trpc.healthCheck.queryOptions());
 
   return (
     <div>
       <h1>Dashboard</h1>
       <p>Welcome {session?.user.name}</p>
-      <p>API: {privateData.data?.message}</p>
+      <p>API: {isLoading ? "Loading..." : data}</p>
     </div>
   );
 }

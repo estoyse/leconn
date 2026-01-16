@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as SidebarWrapperRouteRouteImport } from './routes/_sidebarWrapper/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SidebarWrapperHomeRouteRouteImport } from './routes/_sidebarWrapper/home/route'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as SidebarWrapperProfileUserIdRouteImport } from './routes/_sidebarWrapper/profile.$userId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -25,10 +28,19 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SidebarWrapperRouteRoute = SidebarWrapperRouteRouteImport.update({
+  id: '/_sidebarWrapper',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SidebarWrapperHomeRouteRoute = SidebarWrapperHomeRouteRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => SidebarWrapperRouteRoute,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
@@ -40,11 +52,19 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SidebarWrapperProfileUserIdRoute =
+  SidebarWrapperProfileUserIdRouteImport.update({
+    id: '/profile/$userId',
+    path: '/profile/$userId',
+    getParentRoute: () => SidebarWrapperRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/home': typeof SidebarWrapperHomeRouteRoute
+  '/profile/$userId': typeof SidebarWrapperProfileUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -52,27 +72,56 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/home': typeof SidebarWrapperHomeRouteRoute
+  '/profile/$userId': typeof SidebarWrapperProfileUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_sidebarWrapper': typeof SidebarWrapperRouteRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/_sidebarWrapper/home': typeof SidebarWrapperHomeRouteRoute
+  '/_sidebarWrapper/profile/$userId': typeof SidebarWrapperProfileUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/api/auth/$' | '/api/trpc/$'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/home'
+    | '/profile/$userId'
+    | '/api/auth/$'
+    | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/api/auth/$' | '/api/trpc/$'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/api/auth/$' | '/api/trpc/$'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/home'
+    | '/profile/$userId'
+    | '/api/auth/$'
+    | '/api/trpc/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/_sidebarWrapper'
+    | '/dashboard'
+    | '/login'
+    | '/_sidebarWrapper/home'
+    | '/_sidebarWrapper/profile/$userId'
+    | '/api/auth/$'
+    | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SidebarWrapperRouteRoute: typeof SidebarWrapperRouteRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -95,12 +144,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_sidebarWrapper': {
+      id: '/_sidebarWrapper'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof SidebarWrapperRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_sidebarWrapper/home': {
+      id: '/_sidebarWrapper/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof SidebarWrapperHomeRouteRouteImport
+      parentRoute: typeof SidebarWrapperRouteRoute
     }
     '/api/trpc/$': {
       id: '/api/trpc/$'
@@ -116,11 +179,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_sidebarWrapper/profile/$userId': {
+      id: '/_sidebarWrapper/profile/$userId'
+      path: '/profile/$userId'
+      fullPath: '/profile/$userId'
+      preLoaderRoute: typeof SidebarWrapperProfileUserIdRouteImport
+      parentRoute: typeof SidebarWrapperRouteRoute
+    }
   }
 }
 
+interface SidebarWrapperRouteRouteChildren {
+  SidebarWrapperHomeRouteRoute: typeof SidebarWrapperHomeRouteRoute
+  SidebarWrapperProfileUserIdRoute: typeof SidebarWrapperProfileUserIdRoute
+}
+
+const SidebarWrapperRouteRouteChildren: SidebarWrapperRouteRouteChildren = {
+  SidebarWrapperHomeRouteRoute: SidebarWrapperHomeRouteRoute,
+  SidebarWrapperProfileUserIdRoute: SidebarWrapperProfileUserIdRoute,
+}
+
+const SidebarWrapperRouteRouteWithChildren =
+  SidebarWrapperRouteRoute._addFileChildren(SidebarWrapperRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SidebarWrapperRouteRoute: SidebarWrapperRouteRouteWithChildren,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
